@@ -3,6 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="%PUBLIC_URL%/styles/kendo.default.min.css" />
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/styles/kendo.default.mobile.min.css"
+    />
+    <link rel="stylesheet" href="%PUBLIC_URL%/custom/styles/custom.css" />
+    <script src="%PUBLIC_URL%/js/jquery.min.js"></script>
+
+    <script src="%PUBLIC_URL%/js/kendo.all.min.js"></script>
+
+    <script src="%PUBLIC_URL%/js/kendo.timezones.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -28,7 +40,24 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script id="event-template" type="text/x-kendo-template">
+      #if(isLeave){#
+        <div class="leave-item">
+          #: title#
+        </div>
+      #}else{#
+        <div class="normal-item">
+          #: title#
+        </div>
+      #}#
+
+    </script>
+    
+    <div id="example" class="k-content">
+      <div id="scheduler" class="my-scheduler"></div>
+    </div>
     <div id="root"></div>
+    <div id="draggable-area"></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -39,5 +68,52 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script src="%PUBLIC_URL%/custom/js/myevent.js"></script>
+    <script src="%PUBLIC_URL%/custom/js/data.js"></script>
+    
+    <script src="%PUBLIC_URL%/custom/js/custom.js"></script>
+    
+    <script>
+      console.log(schedulerData)
+        $(function () {
+
+          var dataSource = new kendo.data.SchedulerDataSource({
+            data: schedulerData,
+          });
+
+          $("#scheduler").kendoScheduler({
+            
+            date: genDateTime(""),
+            startTime: genDateTime("08:00"),
+            endTime: genDateTime("20:00"),
+            workDayStart:genDateTime("09:00"),
+            workDayEnd:genDateTime("19:00"),
+            majorTick:"60",
+            editable:{
+              create:false,
+              destroy:false,
+              resize:false,
+              move:false,
+              update:false,
+            },
+            views: ["timeline"],
+            // timezone: "Etc/UTC",
+            eventTemplate: $("#event-template").html(),
+            dataSource: dataSource, // the scheduler data
+            resources: [
+              {
+                field: "assignedId",
+                dataSource: dataResource // the scheduler grouping data
+              },
+            ],
+            group: {
+              resources: ["assignedId"],
+              orientation: "vertical",
+            },
+          });
+        });
+      
+    </script>
+    <script src="%PUBLIC_URL%/custom/js/dragDrop.js"></script>
   </body>
 </html>

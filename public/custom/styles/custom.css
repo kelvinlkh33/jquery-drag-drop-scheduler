@@ -1,0 +1,141 @@
+body {
+  padding: 20px;
+  user-select: none;
+}
+
+.template-container {
+  margin-top: -8px;
+}
+
+.template-container img {
+  float: left;
+  margin: 0 4px;
+  margin-right: 10px;
+}
+
+.template-container h3 {
+  padding: 0 4px 4px;
+  font-size: 12px;
+  font-weight: 400;
+  margin-right: 14px;
+}
+
+.template-title-1 {
+  color: #65ccff;
+}
+
+.template-title-2 {
+  color: #d0d03b;
+}
+
+.k-event {
+  height: 49px !important;
+}
+
+.k-event .k-i-reload,
+.k-event .k-i-non-recurrence {
+  display: none;
+}
+
+.k-scheduler-content tr {
+  height: 50px !important;
+  z-index: 9999;
+}
+
+.k-scheduler-times .k-scheduler-group-cell {
+  height: 49px !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.service-group {
+  /* height: 100px; */
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid;
+}
+
+.service-group-text {
+  display: inline-block;
+  height: 50px;
+  font-size: 24px;
+}
+
+.service-group-button {
+  display: inline-block;
+  float: right;
+}
+
+.service-row {
+  border: 1px #caca2c solid;
+  /* padding-top: 20px;
+  padding-bottom: 40px; */
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.service-row .service-title {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  padding-left: 20px;
+  display: inline-block;
+}
+
+.service-item {
+  margin-left: 100px;
+  margin-top: 10px;
+  padding: 0 20px 20px 20px;
+  border: 1px solid #ccc;
+  height: 100%;
+  display: inline-block;
+}
+
+.k-event {
+  background-color: transparent;
+  border: none;
+  color: black;
+}
+
+.k-event .leave-item {
+  width: 100%;
+  height: 100%;
+  background-color: whitesmoke;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 5px;
+}
+
+.k-event .normal-item {
+  width: 95%;
+  height: 82%;
+  font-weight: bold;
+  font-size: 20px;
+  border: 5px green solid;
+}
+#dragging-item {
+  position: absolute;
+  display: block;
+}
+.dragging-item.dragging-group {
+  background-color: orange;
+
+  width: 20vh;
+}
+.dragging-service-item {
+  margin: 10px;
+  background-color: yellow;
+}
+
+.dragging-item .dragging-service-item {
+  padding: 20px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.dragging-item .dragging-leave-item {
+  background-color: whitesmoke;
+}
+
+.dragging-item .dragging-normal-item {
+}
