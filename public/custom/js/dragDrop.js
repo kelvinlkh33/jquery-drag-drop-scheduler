@@ -59,6 +59,47 @@ function addNewRowToDataResource(index) {
   return newValue;
 }
 
+function removeResources(index_in_array) {
+  var scheduler = $("#scheduler").data("kendoScheduler");
+  var resources = scheduler.resources[0];
+  console.log(index_in_array);
+  resources.dataSource.remove(resources.dataSource.at(index_in_array));
+  scheduler.view(scheduler.view().name);
+
+  // remove from self array
+
+  dataResource.splice(index_in_array, 1);
+  dataResource[index_in_array - 1].extraBuffer = true;
+}
+
+function removeExtraRow(index_in_array) {
+  console.log(index_in_array);
+  console.log(dataResource);
+  console.log(schedulerData);
+  var scheduler = $("#scheduler").data("kendoScheduler");
+  var valueToChange = dataResource[index_in_array + 1].value;
+  removeResources(index_in_array + 1);
+  console.log(valueToChange);
+
+  for (var i = 0; i < schedulerData.length; i++) {
+    console.log(schedulerData[i].assignedId);
+    console.log(dataResource[index_in_array].value);
+    if (schedulerData[i].assignedId == valueToChange) {
+      schedulerData[i].assignedId = dataResource[index_in_array].value;
+    }
+  }
+  console.log(schedulerData);
+
+  for (const data of schedulerData) {
+    console.log(data.assignedId);
+  }
+  var newDataSource = new kendo.data.SchedulerDataSource({
+    data: schedulerData,
+  });
+  scheduler.setDataSource(newDataSource);
+  console.log(index_in_array);
+}
+
 document.addEventListener("mousemove", function (ev) {
   mouseX = ev.pageX + 10;
   mouseY = ev.pageY + 10;
@@ -68,9 +109,7 @@ document.addEventListener("mousedown", function (ev) {
   draggingScheduleGroup = {};
   mouseDownded = true;
   var index;
-  console.log("waiting");
   setTimeout(() => {
-    console.log("mousedowned = ", mouseDownded);
     while (mouseDownded && !document.getElementById("dragging-item")) {
       console.log("you are holding it");
 
@@ -92,20 +131,18 @@ document.addEventListener("mousedown", function (ev) {
         const target_uid = ele.getAttribute("data-uid");
         var scheduler = $("#scheduler").data("kendoScheduler");
         var scheduler_Data = scheduler._data;
-        var index = undefined;
-        var assignedId;
+
+        var assignedId = scheduler_Data.find((obj) => {
+          return target_uid == obj.uid;
+        }).assignedId;
         console.log(scheduler_Data);
-        for (var i = 0; i < scheduler_Data.length; i++) {
-          if (target_uid == scheduler_Data[i].uid) {
-            assignedId = scheduler_Data[i].assignedId; //Kelvin Leung
-          }
-        }
         var draggableSchedule = [];
         for (var j = 0; j < scheduler_Data.length; j++) {
           if (scheduler_Data[j].assignedId == assignedId) {
             draggableSchedule.push(scheduler_Data[j]);
           }
         }
+        var index = undefined;
         for (var i = 0; i < dataResource.length; i++) {
           if (dataResource[i].value == assignedId) {
             index = i;
@@ -202,9 +239,6 @@ document.addEventListener("mousedown", function (ev) {
         console.log("no index");
         mouseDownded = false;
       }
-
-      // var copyElement = trs[index].innerHTML;
-      // console.log(copyElement);
     }
     console.log(mouseDownded);
     if (mouseDownded) {
@@ -251,12 +285,10 @@ document.addEventListener("mouseup", function (ev) {
     // console.log(target_uid);
     var scheduler = $("#scheduler").data("kendoScheduler");
     var scheduler_Data = scheduler._data;
-    var targetAssignedId;
-    for (var i = 0; i < scheduler_Data.length; i++) {
-      if (target_uid == scheduler_Data[i].uid) {
-        targetAssignedId = scheduler_Data[i].assignedId;
-      }
-    }
+    var targetAssignedId = scheduler_Data.find((obj) => {
+      return obj.uid == target_uid;
+    }).assignedId;
+
     for (var i = 0; i < dataResource.length; i++) {
       if (dataResource[i].value == targetAssignedId) {
         index = i;
@@ -281,12 +313,8 @@ document.addEventListener("mouseup", function (ev) {
       }
     }
   }
-  console.log(index);
   var assignedId = dataResource[index].value;
-  // index = trueIndex;
-  console.log(index);
 
-  // console.log(index);
   if (index !== undefined) {
     // if dropped on either row of the scheduler
 
@@ -333,14 +361,12 @@ document.addEventListener("mouseup", function (ev) {
                 1,
                 draggingScheduleGroup.index.length
               );
-              console.log(index);
-              console.log(draggingScheduleGroup);
 
               var newValue = addNewRowToDataResource(index);
               console.log(newValue);
-              for (const data of schedulerData) {
-                if (data.assignedId == fromId) {
-                  data.assignedId = newValue;
+              for (var i = 0; i < schedulerData.length; i++) {
+                if (schedulerData[i].assignedId == fromId) {
+                  schedulerData[i].assignedId = newValue;
                 }
               }
               var newDataSource = new kendo.data.SchedulerDataSource({
@@ -349,44 +375,22 @@ document.addEventListener("mouseup", function (ev) {
               scheduler.setDataSource(newDataSource);
               var index_in_array;
               for (var i = 0; i < dataResource.length; i++) {
-                if (
-                  dataResource[i].value ==
-                  draggingScheduleGroup.index.slice(
-                    1,
-                    draggingScheduleGroup.index.length
-                  )
-                ) {
+                if (dataResource[i].value == fromId) {
                   index_in_array = i;
                 }
               }
-              console.log(
-                draggingScheduleGroup.index.slice(
-                  1,
-                  draggingScheduleGroup.index.length
-                )
-              );
               var fromObj = dataResource.find((obj) => {
-                return (
-                  obj.value ==
-                  draggingScheduleGroup.index.slice(
-                    1,
-                    draggingScheduleGroup.index.length
-                  )
-                );
+                return obj.value == fromId;
               });
               if (fromObj.removable == true) {
                 console.log("removable is true");
-                // remove from kendo
-                var resources = scheduler.resources[0];
-                resources.dataSource.remove(
-                  resources.dataSource.at(index_in_array)
-                );
-                scheduler.view(scheduler.view().name);
-
-                // remove from self array
-                dataResource.splice(index_in_array, 1);
-                dataResource[index_in_array - 1].extraBuffer = true;
+                removeResources(index_in_array);
               } else {
+                if (fromObj.extraBuffer == false) {
+                  // that mean the Sunny Chan is empty but Sunny Chan (Extra) has schedule
+                  // we need to move the extra back to the original row
+                  removeExtraRow(index_in_array);
+                }
                 console.log("removable is false");
               }
             } else {
@@ -400,46 +404,21 @@ document.addEventListener("mouseup", function (ev) {
             // case 2b => move from a non-removale row
             console.log(draggingScheduleGroup);
             var index_in_array;
+            var fromId = draggingScheduleGroup.index.slice(
+              1,
+              draggingScheduleGroup.index.length
+            );
             for (var i = 0; i < dataResource.length; i++) {
-              if (
-                dataResource[i].value ==
-                draggingScheduleGroup.index.slice(
-                  1,
-                  draggingScheduleGroup.index.length
-                )
-              ) {
+              if (dataResource[i].value == fromId) {
                 index_in_array = i;
               }
             }
             var fromObj = dataResource.find((obj) => {
-              return (
-                obj.value ==
-                draggingScheduleGroup.index.slice(
-                  1,
-                  draggingScheduleGroup.index.length
-                )
-              );
+              return obj.value == fromId;
             });
 
-            console.log(fromObj);
-            console.log(index);
+            console.log(index_in_array);
 
-            if (fromObj.removable == true) {
-              console.log("removable is true");
-              // remove from kendo
-              var resources = scheduler.resources[0];
-              console.log(index_in_array);
-              resources.dataSource.remove(
-                resources.dataSource.at(index_in_array)
-              );
-              scheduler.view(scheduler.view().name);
-
-              // remove from self array
-              dataResource.splice(index_in_array, 1);
-              dataResource[index_in_array - 1].extraBuffer = true;
-            } else {
-              console.log("removable is false");
-            }
             console.log(schedulerData);
             for (var i = 0; i < schedulerData.length; i++) {
               if (schedulerData[i].assignedId == fromObj.value) {
@@ -450,15 +429,20 @@ document.addEventListener("mouseup", function (ev) {
               data: schedulerData,
             });
             scheduler.setDataSource(newDataSource);
+            if (fromObj.removable == true) {
+              console.log("removable is true");
+              removeResources(index_in_array);
+            } else {
+              if (fromObj.extraBuffer == false) {
+                removeExtraRow(index_in_array);
+              }
+              console.log("removable is false");
+            }
           }
         } else {
           //case 3 and 4
           console.log("it is dragged from new-service");
-          // console.log(index);
           var haveSchedule = false;
-          // console.log(schedulerData);
-          console.log(index);
-          // console.log(index);
           dataResource_representing_value = dataResource[index].value;
           for (const serviceItem of schedulerData) {
             console.log(serviceItem.assignedId);
@@ -474,45 +458,6 @@ document.addEventListener("mouseup", function (ev) {
             var resources = scheduler.resources[0];
 
             if (dataResource[index].extraBuffer) {
-              // var n = 0;
-              // var newDataResource = [];
-              // var newValue = dataResource.length;
-              // for (const item of dataResource) {
-              //   if (item.id == index) {
-              //     newDataResource.push({
-              //       id: item.id + n,
-              //       text: item.text,
-              //       value: item.value,
-              //       extraBuffer: false,
-              //       removable: item.removable,
-              //     });
-              //     n++;
-              //     newDataResource.push({
-              //       id: item.id + n,
-              //       text: item.text + " (Extra)",
-              //       value: newValue,
-              //       extraBuffer: false,
-              //       removable: true,
-              //     });
-              //     resources.dataSource.pushInsert(index + 1, {
-              //       id: item.id + n,
-              //       text: item.text + " (Extra)",
-              //       value: newValue,
-              //       extraBuffer: false,
-              //       removable: true,
-              //     });
-              //   } else {
-              //     newDataResource.push({
-              //       id: item.id + n,
-              //       text: item.text,
-              //       value: item.value,
-              //       extraBuffer: item.extraBuffer,
-              //       removable: item.removable,
-              //     });
-              //   }
-              // }
-              // dataResource = newDataResource;
-              // scheduler.view(scheduler.view().name);
               var newValue = addNewRowToDataResource(index);
               ////////////////////////////////////////////////////
               // here we need to manage BOTH dataResource and   //
@@ -569,8 +514,6 @@ document.addEventListener("mouseup", function (ev) {
           }
         }
       }
-      console.log(dataResource);
-      console.log(schedulerData);
     } else {
       console.log("nothing on the drag objcet");
     }
