@@ -80,10 +80,11 @@ document.addEventListener("mousedown", function (ev) {
       // it either click on the row, or the k-event, or the new-added row
       if (
         ev.target.classList.contains("leave-item") ||
-        ev.target.classList.contains("normal-item")
+        ev.target.classList.contains("normal-item") ||
+        ev.target.classList.contains("k-event")
       ) {
         //clicked on event
-        console.log(" you holding on the event");
+        console.log("you holding on the event");
         var ele = ev.target;
         while (!ele.classList.contains("k-event")) {
           ele = ele.parentNode;
@@ -290,7 +291,8 @@ document.addEventListener("mouseup", function (ev) {
     // if dropped on either row of the scheduler
 
     if (draggingScheduleGroup.index) {
-      if (draggingScheduleGroup.index == "a" + index) {
+      console.log(draggingScheduleGroup.index);
+      if (draggingScheduleGroup.index == "a" + assignedId) {
         console.log("drag and drop are same location, no effect");
       } else {
         // console.log(draggingScheduleGroup.schedule);
