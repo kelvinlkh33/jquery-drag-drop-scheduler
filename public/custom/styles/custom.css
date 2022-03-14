@@ -73,6 +73,9 @@ body {
   margin-bottom: 10px;
   width: 100%;
 }
+.service-row.removed {
+  display: none;
+}
 
 .service-row .service-title {
   padding-top: 20px;

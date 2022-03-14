@@ -33,7 +33,7 @@ function KDraggable(props) {
   const renderService = (item, index) => {
     return (
       <div
-        id={item.ServiceOrderNumber}
+        id={index}
         className="new-service service-row"
         // onDrag={(ev) => dragHandler(ev)}
       >
@@ -45,6 +45,13 @@ function KDraggable(props) {
       </div>
     );
   };
+
+  // React.useEffect(() => {
+  //   setInterval(() => {
+  //     console.log("i am useEffect");
+  //     // check state update from backend
+  //   }, 1000);
+  // });
 
   return (
     <div className="service-group">

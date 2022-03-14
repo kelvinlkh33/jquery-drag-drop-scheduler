@@ -164,6 +164,7 @@ document.addEventListener("mousedown", function (ev) {
         while (!ele.classList.contains("service-row")) {
           ele = ele.parentNode;
         }
+
         const serviceItems = ele.querySelectorAll(".service-item");
         var draggableSchedule = [];
         for (const item of serviceItems) {
@@ -179,7 +180,7 @@ document.addEventListener("mousedown", function (ev) {
           generateDraggableObjectHTML(draggableSchedule)
         );
         draggingScheduleGroup = {
-          index: "b" + index,
+          index: "b" + ele.getAttribute("id"),
           schedule: draggableSchedule,
         };
       } else {
@@ -512,6 +513,10 @@ document.addEventListener("mouseup", function (ev) {
             });
             scheduler.setDataSource(newDataSource);
           }
+          // after dropping the Schedule, please remove the schedule from kdraggable
+          document
+            .getElementsByClassName("service-row")
+            [parseInt(draggingScheduleGroup.index[1])].classList.add("removed");
         }
       }
     } else {
